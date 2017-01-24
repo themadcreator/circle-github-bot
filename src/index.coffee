@@ -14,22 +14,19 @@ See the License for the specific language governing permissions and
 limitations under the License.
 ###
 
-url = require 'url'
-request = require 'request'
-{ basename } = require 'path'
 { execSync } = require 'child_process'
 
 ENV = {
     # Required ENV variables
-    auth          : 'GH_AUTH_TOKEN'
-    username      : 'CIRCLE_PROJECT_USERNAME'
-    repo          : 'CIRCLE_PROJECT_REPONAME'
-    build         : 'CIRCLE_BUILD_NUM'
     artifacts     : 'CIRCLE_ARTIFACTS'
-    pr            : 'CI_PULL_REQUEST'
+    auth          : 'GH_AUTH_TOKEN'
+    build         : 'CIRCLE_BUILD_NUM'
+    home          : 'HOME'
+    pr            : 'CIRCLE_PR_NUMBER'
+    repo          : 'CIRCLE_PROJECT_REPONAME'
     sha1          : 'CIRCLE_SHA1'
-    # Aux variables, not in ENV. See Bot.create
-    # prNumber      : ''
+    username      : 'CIRCLE_PROJECT_USERNAME'
+    # Aux variables, not in process.env. See Bot.create
     # commitMessage : ''
 }
 
@@ -52,13 +49,13 @@ class Bot
             throw new Error("Missing required environment variables:\n\n#{missing.join('\n')}\n")
 
         ENV.commitMessage = exec('git --no-pager log --pretty=format:"%s" -1').replace(/\\"/g, '\\\\"')
-        ENV.prNumber = basename(ENV.pr)
+
         return new Bot(ENV)
 
     constructor : (@env) ->
 
     artifactUrl : (artifactPath) ->
-        "https://circleci.com/api/v1/project/#{@env.username}/#{@env.repo}/#{@env.build}/artifacts/0/#{@env.artifacts}/#{artifactPath}"
+        "https://circleci.com/api/v1/project/#{@env.username}/#{@env.repo}/#{@env.build}/artifacts/0/#{@env.home}/#{artifactPath}"
 
     artifactLink : (artifactPath, text) ->
         "<a href='#{@artifactUrl(artifactPath)}' target='_blank'>#{text}</a>"
@@ -77,7 +74,7 @@ class Bot
 
     comment : (body) ->
         if (@env.prNumber) isnt ''
-            return @commentIssue(@env.prNumber, body)
+            return @commentIssue(@env.pr, body)
         else
             return @commentCommit(@env.sha1, body)
 
