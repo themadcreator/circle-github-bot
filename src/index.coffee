@@ -39,7 +39,6 @@ exec = (command) ->
 
 # Syncronously POST to `url` with `data` content
 curl = (url, data) ->
-    console.log("CURLING to", url, "with", data)
     return exec("curl -s --data \"#{data}\" #{url}")
 
 class Bot
@@ -71,10 +70,10 @@ class Bot
         @githubUrl("repos/#{@env.username}/#{@env.repo}/#{path}")
 
     commentIssue : (number, body) ->
-        curl(@githubRepoUrl("issues/#{number}/comments"), body)
+        curl(@githubRepoUrl("issues/#{number}/comments"), JSON.stringify({body}))
 
     commentCommit : (sha1, body) ->
-        curl(@githubRepoUrl("commits/#{sha1}/comments"), body)
+        curl(@githubRepoUrl("commits/#{sha1}/comments"), JSON.stringify({body}))
 
     comment : (body) ->
         if (@env.prNumber) isnt ''
