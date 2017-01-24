@@ -39,7 +39,8 @@ exec = (command) ->
 
 # Syncronously POST to `url` with `data` content
 curl = (url, data) ->
-    return exec("curl --data \"#{data}\" #{url}")
+    console.log("CURLING to", url, "with", data)
+    return exec("curl -s --data \"#{data}\" #{url}")
 
 class Bot
     @create = ->
