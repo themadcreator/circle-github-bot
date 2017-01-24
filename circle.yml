@@ -9,5 +9,10 @@ deployment:
     branch: /.*/
     commands:
       - npm run build
-      - echo "Submitting PR Comment..."
-      - ./demo/bot.js
+      - ./demo/comment.js
+  npm:
+    tag: /release-.*/
+    commands:
+      # - npm run check_version
+      - echo -e "$NPM_USER\n$NPM_PASS\n$NPM_EMAIL" | npm login
+      - npm publish

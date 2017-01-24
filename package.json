@@ -4,7 +4,8 @@
   "description": "CircleCI comments on github",
   "main": "dist/index.js",
   "scripts": {
-    "build": "coffee --compile --output dist src"
+    "build": "coffee --compile --output dist src",
+    "check_version": "[[ \"${npm_package_version}\" = \"$(npm view ${npm_package_name} version)\" ]]"
   },
   "repository": {
     "type": "git",
