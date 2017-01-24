@@ -1,5 +1,4 @@
 
-
 # Setting Up Demo Comments on PRs
 
 ### Write the Bot Script
@@ -37,15 +36,17 @@ deployment:
       - ./demo/bot.js
 ```
 
-### Enable CircleCI Build for PRs
-1. Set your main branch (e.g. master) to protected
-1. Enabled "required status checks"
-1. Select "ci/circleci" as a required status check
-
 ### Add Github Auth Token to CircleCI Environment
+Make sure your script can actually post the comment to github
+
 1. Go to your github profile settings
-1. Add a new OAuth token under "Personal access tokens"
+1. Add a new OAuth token under **"Personal access tokens"**
 1. Once created, add the token string to your CircleCI build's environment variables
   1. Build Settings > Environment variables
-1. Name the variable "GH_AUTH_TOKEN"
+1. Name the variable **"GH_AUTH_TOKEN"**
 
+
+### Enable CircleCI Build for PRs
+1. Set your main branch (e.g. master) to protected
+1. Enabled **"required status checks"**
+1. Select **"ci/circleci"** as a required status check
