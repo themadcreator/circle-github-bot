@@ -1,8 +1,13 @@
 general:
   artifacts:
     - demo
+test:
+  override:
+    - echo "No Tests"
 deployment:
   demo:
     branch: /.*/
     commands:
-      - npm run build && ./demo/bot.js
+      - npm run build
+      - echo "Submitting PR Comment..."
+      - ./demo/bot.js
