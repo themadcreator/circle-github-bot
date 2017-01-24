@@ -1,0 +1,30 @@
+{
+  "name": "circle-github-bot",
+  "version": "0.1.0",
+  "description": "CircleCI comments on github",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "coffee --compile --output dist src",
+    "demo_serve": "http-server demo"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/themadcreator/circle-github-bot.git"
+  },
+  "keywords": [
+    "circle",
+    "github",
+    "ops"
+  ],
+  "license": "Apache-2.0",
+  "homepage": "https://github.com/themadcreator/circle-github-bot#readme",
+  "dependencies": {
+    "commander": "^2.9.0",
+    "request": "^2.79.0"
+  },
+  "devDependencies": {
+    "coffee-script": "^1.12.2",
+    "http-server": "^0.9.0",
+    "onchange": "^3.2.1"
+  }
+}
