@@ -34,7 +34,7 @@ deployment:
   demo:
     branch: /.*/
     commands:
-      - ./demo/bot.js
+      - ./demo/comment.js
 ```
 
 ### Add Github Auth Token to CircleCI Environment
