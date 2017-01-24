@@ -5,4 +5,4 @@ deployment:
   demo:
     branch: /.*/
     commands:
-      - npm run build && npm run demo_build
+      - ./demo/bot.js

@@ -1,5 +1,6 @@
 
 
+# Setting Up Demo Comments on PRs
 
 ### Write the Bot Script
 
@@ -22,8 +23,7 @@ bot.comment(`
 With that "shebang" at the top, you can `chmod +x` your script file from the
 command line to make it self-executable.
 
-### Setup Circle CI
-1. Create an account on https://circleci.com/
+### Setup CircleCI
 1. Add CircleCI service integration to your github project in your repo's project settings
   1. Settings > Integrations & Services > Services
 1. Add `circle.yml` file to the root of your repo
@@ -37,12 +37,15 @@ deployment:
       - ./demo/bot.js
 ```
 
-### Authorize Comments
-Authorize your circle build to comment on github
+### Enable CircleCI Build for PRs
+1. Set your main branch (e.g. master) to protected
+1. Enabled "required status checks"
+1. Select "ci/circleci" as a required status check
 
-1. Generate a deploy key
-  1. Settings > Deploy Keys > Add
-  1. Generate a RSA key from command line like so:
-    `ssh-keygen -C name-of-deploy-key -f deploy_key`
-  1. Copy the contents of `deploy_key.pub` and paste into the box on github.com
-  1. The deploy key does not need write access to post comments
+### Add Github Auth Token to CircleCI Environment
+1. Go to your github profile settings
+1. Add a new OAuth token under "Personal access tokens"
+1. Once created, add the token string to your CircleCI build's environment variables
+  1. Build Settings > Environment variables
+1. Name the variable "GH_AUTH_TOKEN"
+
