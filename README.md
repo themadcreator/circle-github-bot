@@ -37,6 +37,11 @@ deployment:
       - ./demo/bot.js
 ```
 
+### Enable CircleCI Build for PRs
+1. Set your main branch (e.g. master) to protected
+1. Enabled "required status checks"
+1. Select "ci/circleci" as a required status check
+
 ### Authorize Comments
 Authorize your circle build to comment on github
 
