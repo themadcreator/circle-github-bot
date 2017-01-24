@@ -14,20 +14,23 @@ See the License for the specific language governing permissions and
 limitations under the License.
 ###
 
+{ basename } = require 'path'
 { execSync } = require 'child_process'
 
 ENV = {
     # Required ENV variables
-    artifacts     : 'CIRCLE_ARTIFACTS'
-    auth          : 'GH_AUTH_TOKEN'
-    build         : 'CIRCLE_BUILD_NUM'
-    home          : 'HOME'
-    pr            : 'CIRCLE_PR_NUMBER'
-    repo          : 'CIRCLE_PROJECT_REPONAME'
-    sha1          : 'CIRCLE_SHA1'
-    username      : 'CIRCLE_PROJECT_USERNAME'
-    # Aux variables, not in process.env. See Bot.create
+    artifacts : 'CIRCLE_ARTIFACTS'
+    auth      : 'GH_AUTH_TOKEN'
+    build     : 'CIRCLE_BUILD_NUM'
+    home      : 'HOME'
+    pr        : 'CI_PULL_REQUEST'
+    repo      : 'CIRCLE_PROJECT_REPONAME'
+    sha1      : 'CIRCLE_SHA1'
+    username  : 'CIRCLE_PROJECT_USERNAME'
+
+    # Aux variables, not in ENV. See Bot.create
     # commitMessage : ''
+    # prNumber      : ''
 }
 
 # Synchronously execute command and return trimmed stdout as string
@@ -49,13 +52,13 @@ class Bot
             throw new Error("Missing required environment variables:\n\n#{missing.join('\n')}\n")
 
         ENV.commitMessage = exec('git --no-pager log --pretty=format:"%s" -1').replace(/\\"/g, '\\\\"')
-
+        ENV.prNumber = basename(ENV.pr)
         return new Bot(ENV)
 
     constructor : (@env) ->
 
     artifactUrl : (artifactPath) ->
-        "https://circleci.com/api/v1/project/#{@env.username}/#{@env.repo}/#{@env.build}/artifacts/0/#{@env.home}/#{artifactPath}"
+        "https://circleci.com/api/v1/project/#{@env.username}/#{@env.repo}/#{@env.build}/artifacts/0/#{@env.home}/#{@env.repo}/#{artifactPath}"
 
     artifactLink : (artifactPath, text) ->
         "<a href='#{@artifactUrl(artifactPath)}' target='_blank'>#{text}</a>"
@@ -74,7 +77,7 @@ class Bot
 
     comment : (body) ->
         if (@env.prNumber) isnt ''
-            return @commentIssue(@env.pr, body)
+            return @commentIssue(@env.prNumber, body)
         else
             return @commentCommit(@env.sha1, body)
 
