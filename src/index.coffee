@@ -34,12 +34,12 @@ ENV = {
 }
 
 # Synchronously execute command and return trimmed stdout as string
-exec = (command) ->
-    return execSync(command).toString('utf8').trim()
+exec = (command, options) ->
+    return execSync(command, options).toString('utf8').trim()
 
 # Syncronously POST to `url` with `data` content
 curl = (url, data) ->
-    return exec("curl -s --data \"#{data}\" #{url}")
+    return exec("curl --silent --data @- #{url}", {input: data})
 
 class Bot
     @create = ->
