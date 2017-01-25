@@ -5,7 +5,7 @@
   "main": "dist/index.js",
   "scripts": {
     "build": "coffee --compile --output dist src",
-    "check_version": "[[ \"${npm_package_version}\" != \"$(npm view ${npm_package_name} version)\" ]] || (echo \"Duplicate version ${npm_package_version}\"; exit 1)"
+    "check_version": "echo ${npm_package_version} $(npm view ${npm_package_name} version) | awk '{ if ($1 == $2) { print \"Duplicate version\"; exit 1 }}'"
   },
   "repository": {
     "type": "git",
