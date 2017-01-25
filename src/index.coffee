@@ -21,7 +21,8 @@ ENV = {
     # Required ENV variables
     artifacts : 'CIRCLE_ARTIFACTS'
     auth      : 'GH_AUTH_TOKEN'
-    build     : 'CIRCLE_BUILD_NUM'
+    buildNum  : 'CIRCLE_BUILD_NUM'
+    buildUrl  : 'CIRCLE_BUILD_URL'
     home      : 'HOME'
     pr        : 'CI_PULL_REQUEST'
     repo      : 'CIRCLE_PROJECT_REPONAME'
@@ -58,7 +59,7 @@ class Bot
     constructor : (@env) ->
 
     artifactUrl : (artifactPath) ->
-        "https://circleci.com/api/v1/project/#{@env.username}/#{@env.repo}/#{@env.build}/artifacts/0/#{@env.home}/#{@env.repo}/#{artifactPath}"
+        "#{env.buildUrl}/artifacts/0/#{@env.home}/#{@env.repo}/#{artifactPath}"
 
     artifactLink : (artifactPath, text) ->
         "<a href='#{@artifactUrl(artifactPath)}' target='_blank'>#{text}</a>"
