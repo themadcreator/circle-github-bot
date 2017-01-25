@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-const bot = require("..").create();
+const bot = require(".").create();
 
 bot.comment(`
 <h3>${bot.env.commitMessage}</h3>
