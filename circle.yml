@@ -3,16 +3,16 @@ general:
     - demo
 test:
   override:
-    - echo "No Tests"
+    - echo "No tests"
 deployment:
   demo:
     branch: /.*/
     commands:
       - npm run build
-      - ./demo/comment.js
+      - ./demo.js
   npm:
     tag: /release-.*/
     commands:
-      # - npm run check_version
+      - npm run -s check_version
       - echo -e "$NPM_USER\n$NPM_PASS\n$NPM_EMAIL" | npm login
       - npm publish
