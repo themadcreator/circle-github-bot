@@ -1,6 +1,6 @@
 {
   "name": "circle-github-bot",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "CircleCI comments on github",
   "main": "dist/index.js",
   "scripts": {
