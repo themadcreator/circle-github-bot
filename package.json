@@ -5,7 +5,7 @@
   "main": "dist/index.js",
   "scripts": {
     "build": "coffee --compile --output dist src",
-    "demo_serve": "http-server demo"
+    "check_version": "[[ \"${npm_package_version}\" = \"$(npm view ${npm_package_name} version)\" ]]"
   },
   "repository": {
     "type": "git",
@@ -17,14 +17,7 @@
     "ops"
   ],
   "license": "Apache-2.0",
-  "homepage": "https://github.com/themadcreator/circle-github-bot#readme",
-  "dependencies": {
-    "commander": "^2.9.0",
-    "request": "^2.79.0"
-  },
   "devDependencies": {
-    "coffee-script": "^1.12.2",
-    "http-server": "^0.9.0",
-    "onchange": "^3.2.1"
+    "coffee-script": "^1.12.2"
   }
 }

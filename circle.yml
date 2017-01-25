@@ -1,8 +1,18 @@
 general:
   artifacts:
     - demo
+test:
+  override:
+    - echo "No Tests"
 deployment:
   demo:
     branch: /.*/
     commands:
-      - ./demo/bot.js
+      - npm run build
+      - ./demo/comment.js
+  npm:
+    tag: /release-.*/
+    commands:
+      # - npm run check_version
+      - echo -e "$NPM_USER\n$NPM_PASS\n$NPM_EMAIL" | npm login
+      - npm publish

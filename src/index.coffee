@@ -14,32 +14,33 @@ See the License for the specific language governing permissions and
 limitations under the License.
 ###
 
-url = require 'url'
-request = require 'request'
 { basename } = require 'path'
 { execSync } = require 'child_process'
 
 ENV = {
     # Required ENV variables
-    auth          : 'GH_AUTH_TOKEN'
-    username      : 'CIRCLE_PROJECT_USERNAME'
-    repo          : 'CIRCLE_PROJECT_REPONAME'
-    build         : 'CIRCLE_BUILD_NUM'
-    artifacts     : 'CIRCLE_ARTIFACTS'
-    pr            : 'CI_PULL_REQUEST'
-    sha1          : 'CIRCLE_SHA1'
+    artifacts : 'CIRCLE_ARTIFACTS'
+    auth      : 'GH_AUTH_TOKEN'
+    buildNum  : 'CIRCLE_BUILD_NUM'
+    buildUrl  : 'CIRCLE_BUILD_URL'
+    home      : 'HOME'
+    pr        : 'CI_PULL_REQUEST'
+    repo      : 'CIRCLE_PROJECT_REPONAME'
+    sha1      : 'CIRCLE_SHA1'
+    username  : 'CIRCLE_PROJECT_USERNAME'
+
     # Aux variables, not in ENV. See Bot.create
-    # prNumber      : ''
     # commitMessage : ''
+    # prNumber      : ''
 }
 
 # Synchronously execute command and return trimmed stdout as string
-exec = (command) ->
-    return execSync(command).toString('utf8').trim()
+exec = (command, options) ->
+    return execSync(command, options).toString('utf8').trim()
 
 # Syncronously POST to `url` with `data` content
 curl = (url, data) ->
-    return exec("curl --data \"#{data}\" #{url}")
+    return exec("curl --silent --data @- #{url}", {input: data})
 
 class Bot
     @create = ->
@@ -49,7 +50,7 @@ class Bot
             ENV[key] = process.env[name]
 
         if missing.length > 0
-            throw new Error("Missing required environment variables: #{missing.join(', ')}")
+            throw new Error("Missing required environment variables:\n\n#{missing.join('\n')}\n")
 
         ENV.commitMessage = exec('git --no-pager log --pretty=format:"%s" -1').replace(/\\"/g, '\\\\"')
         ENV.prNumber = basename(ENV.pr)
@@ -58,7 +59,7 @@ class Bot
     constructor : (@env) ->
 
     artifactUrl : (artifactPath) ->
-        "https://circleci.com/api/v1/project/#{@env.username}/#{@env.repo}/#{@env.build}/artifacts/0/#{@env.artifacts}/#{artifactPath}"
+        "#{@env.buildUrl}/artifacts/0/#{@env.home}/#{@env.repo}/#{artifactPath}"
 
     artifactLink : (artifactPath, text) ->
         "<a href='#{@artifactUrl(artifactPath)}' target='_blank'>#{text}</a>"
@@ -70,10 +71,10 @@ class Bot
         @githubUrl("repos/#{@env.username}/#{@env.repo}/#{path}")
 
     commentIssue : (number, body) ->
-        curl(@githubRepoUrl("issues/#{number}/comments"), body)
+        curl(@githubRepoUrl("issues/#{number}/comments"), JSON.stringify({body}))
 
     commentCommit : (sha1, body) ->
-        curl(@githubRepoUrl("commits/#{sha1}/comments"), body)
+        curl(@githubRepoUrl("commits/#{sha1}/comments"), JSON.stringify({body}))
 
     comment : (body) ->
         if (@env.prNumber) isnt ''
