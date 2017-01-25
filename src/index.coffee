@@ -59,7 +59,7 @@ class Bot
     constructor : (@env) ->
 
     artifactUrl : (artifactPath) ->
-        "#{env.buildUrl}/artifacts/0/#{@env.home}/#{@env.repo}/#{artifactPath}"
+        "#{@env.buildUrl}/artifacts/0/#{@env.home}/#{@env.repo}/#{artifactPath}"
 
     artifactLink : (artifactPath, text) ->
         "<a href='#{@artifactUrl(artifactPath)}' target='_blank'>#{text}</a>"
