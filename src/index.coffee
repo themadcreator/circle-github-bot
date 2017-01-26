@@ -32,6 +32,7 @@ ENV = {
     # Aux variables, not in ENV. See Bot.create
     # commitMessage : ''
     # prNumber      : ''
+    # githubDomain  : 'api.github.com'
 }
 
 # Synchronously execute command and return trimmed stdout as string
@@ -43,7 +44,7 @@ curl = (url, data) ->
     return exec("curl --silent --data @- #{url}", {input: data})
 
 class Bot
-    @create = ->
+    @create = (options = {}) ->
         missing = []
         for key, name of ENV
             if not process.env[name]? then missing.push(name)
@@ -54,6 +55,7 @@ class Bot
 
         ENV.commitMessage = exec('git --no-pager log --pretty=format:"%s" -1').replace(/\\"/g, '\\\\"')
         ENV.prNumber = basename(ENV.pr)
+        ENV.githubDomain  = options.githubDomain ? 'api.github.com'
         return new Bot(ENV)
 
     constructor : (@env) ->
@@ -65,7 +67,7 @@ class Bot
         "<a href='#{@artifactUrl(artifactPath)}' target='_blank'>#{text}</a>"
 
     githubUrl : (path) ->
-        "https://#{@env.auth}:x-oauth-basic@api.github.com/#{path}"
+        "https://#{@env.auth}:x-oauth-basic@#{@env.githubDomain}/#{path}"
 
     githubRepoUrl : (path) ->
         @githubUrl("repos/#{@env.username}/#{@env.repo}/#{path}")
