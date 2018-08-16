@@ -7,14 +7,12 @@ jobs:
     steps:
       - checkout
       - run: npm install
-
   build:
     docker:
       - image: circleci/node:8.10.0
     steps:
       - checkout
       - run: npm run build
-
   demo:
     docker:
       - image: circleci/node:8.10.0
@@ -23,7 +21,6 @@ jobs:
       - run: ./demo.js
       - store_artifacts:
           path: demo
-
   publish:
     docker:
       - image: circleci/node:8.10.0
