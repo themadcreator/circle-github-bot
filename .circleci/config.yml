@@ -48,6 +48,7 @@ jobs:
       - image: circleci/node:8.10.0
     steps:
       - checkout
+      - restore_cache: *restore_cache
       - run: npm run -s check_version
       - run: npm run build
       - run: echo -e "$NPM_USER\n$NPM_PASS\n$NPM_EMAIL" | npm login
@@ -65,6 +66,7 @@ workflows:
       - publish:
           requires: [install]
           filters:
+            tags:
+              only: /^release-.*/
             branches:
-              only:
-                - /release-.*/
+              ignore: /.*/
