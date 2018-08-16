@@ -37,7 +37,7 @@ jobs:
     steps:
       - checkout
       - restore_cache: *restore_cache
-      - attach_to_workspace:
+      - attach_workspace:
           at: '.'
       - run: ./demo.js
       - store_artifacts:
