@@ -65,6 +65,6 @@ workflows:
       - publish:
           requires: [install]
           filters:
-            branches:
+            tags:
               only:
-                - /release-.*/
+                - /^release-.*/
