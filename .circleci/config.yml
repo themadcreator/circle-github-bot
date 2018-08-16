@@ -58,7 +58,10 @@ workflows:
   version: 2
   circle-comment-bot:
     jobs:
-      - install
+      - install:
+          filters:
+            tags:
+              only: /.*/
       - build:
           requires: [install]
       - demo:
