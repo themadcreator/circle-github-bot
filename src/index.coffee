@@ -72,11 +72,11 @@ class Bot
 
     commentIssue : (number, body) ->
         console.log("Commenting on issue #{number}")
-        curl(@githubRepoUrl("issues/#{number}/comments"), JSON.stringify({body}))
+        console.log(curl(@githubRepoUrl("issues/#{number}/comments"), JSON.stringify({body})))
 
     commentCommit : (sha1, body) ->
         console.log("Commenting on commit with hash #{sha1}")
-        curl(@githubRepoUrl("commits/#{sha1}/comments"), JSON.stringify({body}))
+        console.log(curl(@githubRepoUrl("commits/#{sha1}/comments"), JSON.stringify({body})))
 
     comment : (body) ->
         if (@env.prNumber) isnt ''
