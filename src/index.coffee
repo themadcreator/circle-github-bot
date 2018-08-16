@@ -52,7 +52,8 @@ class Bot
             throw new Error("Missing required environment variables:\n\n#{missing.join('\n')}\n")
 
         ENV.commitMessage = exec('git --no-pager log --pretty=format:"%s" -1').replace(/\\"/g, '\\\\"')
-        ENV.prNumber = basename(process.env['CI_PULL_REQUEST'])
+        # will either be a PR with a number or just a commit
+        ENV.prNumber = if process.env['CI_PULL_REQUEST'] then basename(process.env['CI_PULL_REQUEST']) else null
         ENV.githubDomain  = options.githubDomain ? 'api.github.com'
         return new Bot(ENV)
 
