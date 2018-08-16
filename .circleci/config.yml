@@ -1,5 +1,15 @@
 version: 2
 
+references:
+  save_cache: &save_cache
+    key: v1-deps-{{ checksum "package.json" }}
+    paths:
+      - node_modules
+  restore_cache: &restore_cache
+    keys:
+      - v1-deps-{{ checksum "package.json" }}
+      - v1-deps
+
 jobs:
   install:
     docker:
@@ -7,20 +17,32 @@ jobs:
     steps:
       - checkout
       - run: npm install
+      - save_cache: *save_cache
+
   build:
     docker:
       - image: circleci/node:8.10.0
     steps:
       - checkout
+      - restore_cache: *restore_cache
       - run: npm run build
+      - persist_to_workspace:
+          root: '.'
+          paths:
+            - dist
+
   demo:
     docker:
       - image: circleci/node:8.10.0
     steps:
       - checkout
+      - restore_cache: *restore_cache
+      - attach_to_workspace:
+          at: '.'
       - run: ./demo.js
       - store_artifacts:
           path: demo
+
   publish:
     docker:
       - image: circleci/node:8.10.0
@@ -41,7 +63,7 @@ workflows:
       - demo:
           requires: [install, build]
       - publish:
-          requires: [install,build]
+          requires: [install]
           filters:
             branches:
               only:
