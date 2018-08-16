@@ -1,0 +1,51 @@
+version: 2
+
+jobs:
+  install:
+    docker:
+      - image: circleci/node:8.10.0
+    steps:
+      - checkout
+      - run: npm install
+
+  build:
+    docker:
+      - image: circleci/node:8.10.0
+    steps:
+      - checkout
+      - run: npm run build
+
+  demo:
+    docker:
+      - image: circleci/node:8.10.0
+    steps:
+      - checkout
+      - run: ./demo.js
+      - store_artifacts:
+          path: demo
+
+  publish:
+    docker:
+      - image: circleci/node:8.10.0
+    steps:
+      - checkout
+      - run: npm run -s check_version
+      - run: npm run build
+      - run: echo -e "$NPM_USER\n$NPM_PASS\n$NPM_EMAIL" | npm login
+      - run: npm publish
+
+workflows:
+  version: 2
+  chart:
+    jobs:
+      - install
+      - build:
+          require: [install]
+      - demo:
+          requires: [install, build]
+      - publish:
+          requires: [install,build]
+          filters:
+            branches:
+              only:
+                - /release-.*/
