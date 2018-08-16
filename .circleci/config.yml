@@ -55,7 +55,7 @@ jobs:
 
 workflows:
   version: 2
-  chart:
+  circle-comment-bot:
     jobs:
       - install
       - build:
