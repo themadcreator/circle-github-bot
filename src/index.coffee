@@ -52,14 +52,14 @@ class Bot
             throw new Error("Missing required environment variables:\n\n#{missing.join('\n')}\n")
 
         ENV.commitMessage = exec('git --no-pager log --pretty=format:"%s" -1').replace(/\\"/g, '\\\\"')
-        ENV.prNumber = basename('CI_PULL_REQUEST')
+        ENV.prNumber = basename(process.env['CI_PULL_REQUEST'])
         ENV.githubDomain  = options.githubDomain ? 'api.github.com'
         return new Bot(ENV)
 
     constructor : (@env) ->
 
     artifactUrl : (artifactPath) ->
-        "#{@env.buildUrl}/artifacts/0/#{@env.home}/#{@env.repo}/#{artifactPath}"
+        "#{@env.buildUrl}/artifacts/0/#{@env.home}/project/#{artifactPath}"
 
     artifactLink : (artifactPath, text) ->
         "<a href='#{@artifactUrl(artifactPath)}' target='_blank'>#{text}</a>"
@@ -71,10 +71,12 @@ class Bot
         @githubUrl("repos/#{@env.username}/#{@env.repo}/#{path}")
 
     commentIssue : (number, body) ->
-        curl(@githubRepoUrl("issues/#{number}/comments"), JSON.stringify({body}))
+        console.log("Commenting on issue #{number}")
+        console.log(curl(@githubRepoUrl("issues/#{number}/comments"), JSON.stringify({body})))
 
     commentCommit : (sha1, body) ->
-        curl(@githubRepoUrl("commits/#{sha1}/comments"), JSON.stringify({body}))
+        console.log("Commenting on commit with hash #{sha1}")
+        console.log(curl(@githubRepoUrl("commits/#{sha1}/comments"), JSON.stringify({body})))
 
     comment : (body) ->
         if (@env.prNumber) isnt ''
