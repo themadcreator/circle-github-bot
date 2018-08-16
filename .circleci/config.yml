@@ -37,7 +37,7 @@ workflows:
     jobs:
       - install
       - build:
-          require: [install]
+          requires: [install]
       - demo:
           requires: [install, build]
       - publish:
