@@ -19,12 +19,10 @@ limitations under the License.
 
 ENV = {
     # Required ENV variables
-    artifacts : 'CIRCLE_ARTIFACTS'
     auth      : 'GH_AUTH_TOKEN'
     buildNum  : 'CIRCLE_BUILD_NUM'
     buildUrl  : 'CIRCLE_BUILD_URL'
     home      : 'HOME'
-    pr        : 'CI_PULL_REQUEST'
     repo      : 'CIRCLE_PROJECT_REPONAME'
     sha1      : 'CIRCLE_SHA1'
     username  : 'CIRCLE_PROJECT_USERNAME'
@@ -54,7 +52,7 @@ class Bot
             throw new Error("Missing required environment variables:\n\n#{missing.join('\n')}\n")
 
         ENV.commitMessage = exec('git --no-pager log --pretty=format:"%s" -1').replace(/\\"/g, '\\\\"')
-        ENV.prNumber = basename(ENV.pr)
+        ENV.prNumber = basename('CI_PULL_REQUEST')
         ENV.githubDomain  = options.githubDomain ? 'api.github.com'
         return new Bot(ENV)
 
