@@ -67,7 +67,6 @@ workflows:
           requires: [install]
           filters:
             tags:
-              only:
-                - /^release-.*/
-              branches:
-                ignore: /.*/
+              only: /^release-.*/
+            branches:
+              ignore: /.*/
