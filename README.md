@@ -1,4 +1,6 @@
 
+> Now compatible with Circle 2.0
+
 # Circle Github Bot
 
 This library helps you submit a comment on the PR from inside your CircleCI
@@ -45,26 +47,39 @@ command line to make it self-executable.
 1. Add CircleCI service integration to your github project in your repo's project settings
   1. Settings > Integrations & Services > Services
   1. Once CircleCI is following your github project, it will add its own deploy key to this repo
-1. Add `circle.yml` file to the root of your repo
-  1. Include your `demo/` directory in the `general.artifacts` list
-  1. Include a section in `deployment` that generates your preview and posts the comment
+1. Add `.circleci/config.yml` file to the root of your repo
+  1. Store your `demo/` directory as a build artifact
+  1. Include job that runs your demo script
 
 ```yaml
-general:
-  artifacts:
-    - demo
-deployment:
+version: 2
+
+jobs:
   demo:
-    branch: /.*/
-    commands:
-      - ./demo.js
+    docker:
+      - image: circleci/node:8.10.0
+    steps:
+      - checkout
+      - run: npm install
+      - run: npm run build
+      - run: ./demo.js
+      - store_artifacts:
+          path: demo
+
+workflows:
+  version: 2
+  your-project-workflow:
+    jobs:
+      - demo
 ```
 
 ### Add Github Auth Token to CircleCI Environment
 Make sure your script can actually post the comment to github
 
 1. Go to your github profile settings
-1. Add a new OAuth token under **"Personal access tokens"**
+1. Add a new OAuth token under **"Developer Settings"** -> **"Personal access tokens"**
+1. The only permissions required are those needed to comment on your repo. For
+   example `public_repo` is enough for commenting on a public repository.
 1. Once created, add the token string to your CircleCI build's environment variables
   1. Build Settings > Environment variables
 1. Name the variable **"GH_AUTH_TOKEN"**
@@ -74,4 +89,4 @@ Optional, but helpful. This makes sure your builds actually pass before a PR can
 
 1. Set your main branch (e.g. master) to protected
 1. Enabled **"required status checks"**
-1. Select **"ci/circleci"** as a required status check
+1. Select your **"ci/circleci"** workflow jobs as a required status checks
