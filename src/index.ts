@@ -49,7 +49,7 @@ function exec(command: string, options?: ExecSyncOptions) {
 
 // Syncronously POST to `url` with `data` content
 function curl(url: string, data: string) {
-    return exec(`curl --silent --data this.- ${url}`, { input: data });
+    return exec(`curl --silent --data @- ${url}`, { input: data });
 }
 
 class Bot {
