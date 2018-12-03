@@ -48,7 +48,8 @@ class Bot
             if not process.env[name]? then missing.push(name)
             ENV[key] = process.env[name]
 
-        if missing.length > 0
+        # auth is only required to submit comment.
+        if missing.length > 1 or missing[0] isnt "auth"
             throw new Error("Missing required environment variables:\n\n#{missing.join('\n')}\n")
 
         ENV.commitMessage = exec('git --no-pager log --pretty=format:"%s" -1').replace(/\\"/g, '\\\\"')
@@ -71,18 +72,25 @@ class Bot
     githubRepoUrl : (path) ->
         @githubUrl("repos/#{@env.username}/#{@env.repo}/#{path}")
 
-    commentIssue : (number, body) ->
-        console.log("Commenting on issue #{number}")
-        console.log(curl(@githubRepoUrl("issues/#{number}/comments"), JSON.stringify({body})))
-
-    commentCommit : (sha1, body) ->
-        console.log("Commenting on commit with hash #{sha1}")
-        console.log(curl(@githubRepoUrl("commits/#{sha1}/comments"), JSON.stringify({body})))
-
     comment : (body) ->
         if (@env.prNumber) isnt ''
             return @commentIssue(@env.prNumber, body)
         else
             return @commentCommit(@env.sha1, body)
+
+    commentIssue : (number, body) ->
+        console.log("Commenting on issue #{number}")
+        @_curl("issues/#{number}/comments", body)
+
+    commentCommit : (sha1, body) ->
+        console.log("Commenting on commit with hash #{sha1}")
+        @_curl("commits/#{sha1}/comments", body)
+
+    _curl : (path, body) ->
+        if (@env.auth)
+            console.log(curl(@githubRepoUrl(path), JSON.stringify({ body })))
+        else
+            console.log("Cannot post comment: missing #{ENV.auth}.");
+            console.log(body);
 
 module.exports = Bot
