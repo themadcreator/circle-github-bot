@@ -43,20 +43,22 @@ curl = (url, data) ->
 
 class Bot
     @create = (options = {}) ->
+        env = {
+            commitMessage: exec('git --no-pager log --pretty=format:"%s" -1').replace(/\\"/g, '\\\\"')
+            # will either be a PR with a number or just a commit
+            prNumber: if process.env['CI_PULL_REQUEST'] then basename(process.env['CI_PULL_REQUEST']) else ''
+            githubDomain: options.githubDomain ? 'api.github.com'
+        };
         missing = []
         for key, name of ENV
-            ENV[key] = process.env[name]
+            env[key] = process.env[name]
             # auth is only required to submit comment.
             if not process.env[name]? and key isnt "auth" then missing.push(name)
 
         if missing.length > 0
             throw new Error("Missing required environment variables:\n\n#{missing.join('\n')}\n")
 
-        ENV.commitMessage = exec('git --no-pager log --pretty=format:"%s" -1').replace(/\\"/g, '\\\\"')
-        # will either be a PR with a number or just a commit
-        ENV.prNumber = if process.env['CI_PULL_REQUEST'] then basename(process.env['CI_PULL_REQUEST']) else ''
-        ENV.githubDomain  = options.githubDomain ? 'api.github.com'
-        return new Bot(ENV)
+        return new Bot(env)
 
     constructor : (@env) ->
 
@@ -87,7 +89,6 @@ class Bot
         @_curl("commits/#{sha1}/comments", body)
 
     _curl : (path, body) ->
-        console.log(@env.auth)
         if (@env.auth)
             console.log(curl(@githubRepoUrl(path), JSON.stringify({ body })))
         else
