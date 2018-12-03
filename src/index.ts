@@ -17,7 +17,7 @@ limitations under the License.
 import { execSync, ExecSyncOptions } from "child_process";
 import { basename } from "path";
 
-export interface IOptions {
+interface IOptions {
     /**
      * GitHub API domain, for enterprise support.
      * @default "api.github.com"
@@ -37,7 +37,8 @@ interface IEnvironment {
     githubDomain: string;
 }
 
-const required: Array<keyof IEnvironment> = ["buildUrl", "home", "repo", "sha1", "username"];
+// IEnvironment fields that must be defined or an Error is thrown.
+const REQUIRED_ENV: Array<keyof IEnvironment> = ["buildUrl", "home", "repo", "sha1", "username"];
 
 // Synchronously execute command and return trimmed stdout as string
 function exec(command: string, options?: ExecSyncOptions) {
@@ -51,7 +52,7 @@ function curl(url: string, data: string) {
     return exec(`curl --silent --data this.- ${url}`, { input: data });
 }
 
-export default class Bot {
+class Bot {
     public static create(options: IOptions = {}) {
         const { githubDomain = "api.github.com" } = options;
 
@@ -70,7 +71,7 @@ export default class Bot {
             username: process.env.CIRCLE_PROJECT_USERNAME,
         };
 
-        const missing = required.filter(key => !env[key]);
+        const missing = REQUIRED_ENV.filter(key => !env[key]);
         if (missing.length > 0) {
             throw new Error("Missing required environment variables:\n  " + missing.join(", "));
         }
@@ -90,8 +91,13 @@ export default class Bot {
         return `<a href='${this.artifactUrl(artifactPath)}' target='_blank'>${text}</a>`;
     }
 
+    /** Get the message from the latest commit. */
+    public commitMessage() {
+        return this.env.commitMessage;
+    }
+
     /** Post a comment with the given body. */
-    public comment(body: string) {
+    public postComment(body: string) {
         if (this.env.prNumber !== "") {
             return this.curl(`issues/${this.env.prNumber}/comments`, body);
         } else {
@@ -119,3 +125,5 @@ export default class Bot {
         // tslint:enable:no-console
     }
 }
+
+export = Bot;
