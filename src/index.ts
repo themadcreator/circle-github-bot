@@ -19,7 +19,7 @@ import { basename } from "path";
 
 export interface IOptions {
     /**
-     * URL for Github API.
+     * GitHub API domain, for enterprise support.
      * @default "api.github.com"
      */
     githubDomain?: string;
@@ -108,6 +108,7 @@ export default class Bot {
     }
 
     private curl(path: string, body: string) {
+        // tslint:disable:no-console
         if (this.env.auth) {
             console.log(`Posting to ${path}...`);
             console.log(curl(this.githubRepoUrl(path), JSON.stringify({ body })));
@@ -115,5 +116,6 @@ export default class Bot {
             console.log(`Cannot post comment: missing GH_AUTH_TOKEN.`);
             console.log(body);
         }
+        // tslint:enable:no-console
     }
 }

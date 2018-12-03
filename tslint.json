@@ -1,7 +1,6 @@
 {
   "extends": "@blueprintjs/tslint-config",
   "rules": {
-    "no-console": false,
     "no-default-export": false
   }
 }
