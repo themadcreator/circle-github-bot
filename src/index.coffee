@@ -43,16 +43,12 @@ curl = (url, data) ->
 
 class Bot
     @create = (options = {}) ->
-        # will either be a PR with a number or just a commit
-        # CI_PULL_REQUEST was deprecated in favor of CIRCLE_PULL_REQUEST in Circle 2.0
-        prNumber = if process.env['CIRCLE_PULL_REQUEST']
-            then basename(process.env['CIRCLE_PULL_REQUEST'])
-            else (if process.env['CI_PULL_REQUEST'] then basename(process.env['CI_PULL_REQUEST']) else '')
-
         env = {
             commitMessage: exec('git --no-pager log --pretty=format:"%s" -1').replace(/\\"/g, '\\\\"')
             githubDomain: options.githubDomain ? 'api.github.com'
-            prNumber: prNumber
+            # will either be a PR with a number or just a commit
+            # CI_PULL_REQUEST was deprecated in favor of CIRCLE_PULL_REQUEST in Circle 2.0
+            prNumber: basename(process.env['CIRCLE_PULL_REQUEST'] or process.env['CI_PULL_REQUEST'] or '')
         };
         missing = []
         for key, name of ENV
