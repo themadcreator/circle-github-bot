@@ -53,7 +53,10 @@ class Bot
 
         ENV.commitMessage = exec('git --no-pager log --pretty=format:"%s" -1').replace(/\\"/g, '\\\\"')
         # will either be a PR with a number or just a commit
-        ENV.prNumber = if process.env['CI_PULL_REQUEST'] then basename(process.env['CI_PULL_REQUEST']) else ''
+        # CI_PULL_REQUEST was deprecated in favor of CIRCLE_PULL_REQUEST in Circle 2.0
+        ENV.prNumber = if process.env['CIRCLE_PULL_REQUEST']
+            then basename(process.env['CIRCLE_PULL_REQUEST'])
+            else (if process.env['CI_PULL_REQUEST'] then basename(process.env['CI_PULL_REQUEST']) else '')
         ENV.githubDomain  = options.githubDomain ? 'api.github.com'
         return new Bot(ENV)
 
