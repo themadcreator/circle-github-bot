@@ -45,11 +45,11 @@ class Bot
     @create = (options = {}) ->
         missing = []
         for key, name of ENV
-            if not process.env[name]? then missing.push(name)
+            # auth is only required to submit comment.
+            if not process.env[name]? and key isnt "auth" then missing.push(name)
             ENV[key] = process.env[name]
 
-        # auth is only required to submit comment.
-        if missing.length > 1 or missing[0] isnt "auth"
+        if missing.length > 0
             throw new Error("Missing required environment variables:\n\n#{missing.join('\n')}\n")
 
         ENV.commitMessage = exec('git --no-pager log --pretty=format:"%s" -1').replace(/\\"/g, '\\\\"')
