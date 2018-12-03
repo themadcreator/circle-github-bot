@@ -79,6 +79,7 @@ class Bot {
         return new Bot(env);
     }
 
+    /** @internal */
     private constructor(private readonly env: IEnvironment) {}
 
     /** Get an absolute URL for the given artifact path. */
@@ -113,6 +114,7 @@ class Bot {
         return this.githubUrl(`repos/${this.env.username}/${this.env.repo}/${path}`);
     }
 
+    /** @internal */
     private curl(path: string, body: string) {
         // tslint:disable:no-console
         if (this.env.auth) {

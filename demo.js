@@ -1,6 +1,5 @@
 #!/usr/bin/env node
 
-// @ts-check
 const bot = require(".").create();
 
 bot.postComment(`
