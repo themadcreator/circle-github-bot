@@ -26,15 +26,15 @@ interface IOptions {
 }
 
 interface IEnvironment {
-    auth: string;
-    buildUrl: string;
-    home: string;
-    repo: string;
-    sha1: string;
-    username: string;
-    commitMessage: string;
-    prNumber: string;
-    githubDomain: string;
+    readonly auth: string;
+    readonly buildUrl: string;
+    readonly home: string;
+    readonly repo: string;
+    readonly sha1: string;
+    readonly username: string;
+    readonly commitMessage: string;
+    readonly prNumber: string;
+    readonly githubDomain: string;
 }
 
 // IEnvironment fields that must be defined or an Error is thrown.
@@ -98,7 +98,7 @@ class Bot {
     }
 
     /** Post a comment with the given body. */
-    public postComment(body: string) {
+    public comment(body: string) {
         if (this.env.prNumber !== "") {
             return this.curl(`issues/${this.env.prNumber}/comments`, body);
         } else {
