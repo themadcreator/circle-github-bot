@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "CircleCI comments on github",
   "main": "dist/index.js",
+  "files": ["dist"],
   "scripts": {
     "build": "tsc -p src",
     "lint": "tslint -p src",
