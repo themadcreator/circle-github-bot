@@ -107,7 +107,7 @@ class Bot {
     }
 
     private githubUrl(path: string) {
-        return `https://${this.env.auth}:x-oauth-basicthis.${this.env.githubDomain}/${path}`;
+        return `https://${this.env.auth}:x-oauth-basic@${this.env.githubDomain}/${path}`;
     }
 
     private githubRepoUrl(path: string) {
