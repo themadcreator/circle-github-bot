@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-process.env.GH_AUTH_TOKEN = undefined;
+process.env.GH_AUTH_TOKEN = "";
 
 const bot = require(".").create();
 

@@ -45,9 +45,9 @@ class Bot
     @create = (options = {}) ->
         missing = []
         for key, name of ENV
+            ENV[key] = process.env[name]
             # auth is only required to submit comment.
             if not process.env[name]? and key isnt "auth" then missing.push(name)
-            ENV[key] = process.env[name]
 
         if missing.length > 0
             throw new Error("Missing required environment variables:\n\n#{missing.join('\n')}\n")
@@ -87,6 +87,7 @@ class Bot
         @_curl("commits/#{sha1}/comments", body)
 
     _curl : (path, body) ->
+        console.log(@env.auth)
         if (@env.auth)
             console.log(curl(@githubRepoUrl(path), JSON.stringify({ body })))
         else
