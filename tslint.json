@@ -1,6 +1,3 @@
 {
-  "extends": "@blueprintjs/tslint-config",
-  "rules": {
-    "no-default-export": false
-  }
+  "extends": "@blueprintjs/tslint-config"
 }

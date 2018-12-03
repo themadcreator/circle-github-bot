@@ -5,6 +5,7 @@
   "main": "dist/index.js",
   "scripts": {
     "build": "tsc -p src",
+    "lint": "tslint -p src",
     "check_version": "echo ${npm_package_version} $(npm view ${npm_package_name} version) | awk '{ if ($1 == $2) { print \"Duplicate version\"; exit 1 }}'"
   },
   "devDependencies": {
