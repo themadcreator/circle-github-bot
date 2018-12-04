@@ -31,6 +31,14 @@ jobs:
           paths:
             - dist
 
+  lint:
+    docker:
+      - image: circleci/node:8.10.0
+    steps:
+      - checkout
+      - restore_cache: *restore_cache
+      - run: npm run lint
+
   demo:
     docker:
       - image: circleci/node:8.10.0
@@ -65,10 +73,12 @@ workflows:
               only: /.*/
       - build:
           requires: [install]
+      - lint:
+          requires: [install]
       - demo:
           requires: [install, build]
       - publish:
-          requires: [install]
+          requires: [install, lint]
           filters:
             tags:
               only: /^release-.*/
