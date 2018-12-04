@@ -26,7 +26,6 @@ interface IOptions {
 }
 
 interface IEnvironment {
-    readonly auth: string;
     readonly buildUrl: string;
     readonly home: string;
     readonly repo: string;
@@ -60,7 +59,6 @@ class Bot {
         const prNumber = basename(process.env.CIRCLE_PULL_REQUEST || process.env.CI_PULL_REQUEST || "");
 
         const env: IEnvironment = {
-            auth: process.env.GH_AUTH_TOKEN,
             buildUrl: process.env.CIRCLE_BUILD_URL,
             commitMessage: exec('git --no-pager log --pretty=format:"%s" -1').replace(/\\"/g, '\\\\"'),
             githubDomain,
@@ -97,33 +95,38 @@ class Bot {
         return this.env.commitMessage;
     }
 
-    /** Post a comment with the given body. */
-    public comment(body: string) {
+    /**
+     * Post a comment with the given body.
+     *
+     * Requires a GitHub auth token. We recommend generating a new token
+     * and saving it as an environment variable called `GH_AUTH_TOKEN`. Then
+     * pass this variable when calling this method.
+     *
+     * ```js
+     * bot.comment("...", process.env.GH_AUTH_TOKEN);
+     * ```
+     */
+    public comment(body: string, authToken: string) {
         if (this.env.prNumber !== "") {
-            return this.curl(`issues/${this.env.prNumber}/comments`, body);
+            return this.curl(`issues/${this.env.prNumber}/comments`, body, authToken);
         } else {
-            return this.curl(`commits/${this.env.sha1}/comments`, body);
+            return this.curl(`commits/${this.env.sha1}/comments`, body, authToken);
         }
     }
 
-    private githubUrl(path: string) {
-        return `https://${this.env.auth}:x-oauth-basic@${this.env.githubDomain}/${path}`;
+    private githubUrl(path: string, authToken: string) {
+        return `https://${authToken}:x-oauth-basic@${this.env.githubDomain}/${path}`;
     }
 
-    private githubRepoUrl(path: string) {
-        return this.githubUrl(`repos/${this.env.username}/${this.env.repo}/${path}`);
+    private githubRepoUrl(path: string, authToken: string) {
+        return this.githubUrl(`repos/${this.env.username}/${this.env.repo}/${path}`, authToken);
     }
 
     /** @internal */
-    private curl(path: string, body: string) {
+    private curl(path: string, body: string, authToken: string) {
         // tslint:disable:no-console
-        if (this.env.auth) {
-            console.log(`Posting to ${path}...`);
-            console.log(curl(this.githubRepoUrl(path), JSON.stringify({ body })));
-        } else {
-            console.log(`Cannot post comment: missing GH_AUTH_TOKEN.`);
-            console.log(body);
-        }
+        console.log(`Posting to ${path}...`);
+        console.log(curl(this.githubRepoUrl(path, authToken), JSON.stringify({ body })));
         // tslint:enable:no-console
     }
 }
