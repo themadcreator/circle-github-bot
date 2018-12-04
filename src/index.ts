@@ -103,30 +103,31 @@ class Bot {
      * pass this variable when calling this method.
      *
      * ```js
-     * bot.comment("...", process.env.GH_AUTH_TOKEN);
+     * bot.comment(process.env.GH_AUTH_TOKEN, "...");
      * ```
      */
-    public comment(body: string, authToken: string) {
+    public comment(authToken: string, body: string = "") {
+        if (!authToken) {
+            throw new Error("Bot.comment() requires auth token.");
+        }
         if (this.env.prNumber !== "") {
-            return this.curl(`issues/${this.env.prNumber}/comments`, body, authToken);
+            return this.curl(authToken, `issues/${this.env.prNumber}/comments`, body);
         } else {
-            return this.curl(`commits/${this.env.sha1}/comments`, body, authToken);
+            return this.curl(authToken, `commits/${this.env.sha1}/comments`, body);
         }
     }
 
-    private githubUrl(path: string, authToken: string) {
-        return `https://${authToken}:x-oauth-basic@${this.env.githubDomain}/${path}`;
-    }
-
-    private githubRepoUrl(path: string, authToken: string) {
-        return this.githubUrl(`repos/${this.env.username}/${this.env.repo}/${path}`, authToken);
+    /** @internal */
+    private githubUrl(authToken: string, path: string) {
+        const { githubDomain, username, repo } = this.env;
+        return `https://${authToken}:x-oauth-basic@${githubDomain}/repos/${username}/${repo}/${path}`;
     }
 
     /** @internal */
-    private curl(path: string, body: string, authToken: string) {
+    private curl(authToken: string, path: string, body: string) {
         // tslint:disable:no-console
         console.log(`Posting to ${path}...`);
-        console.log(curl(this.githubRepoUrl(path, authToken), JSON.stringify({ body })));
+        console.log(curl(this.githubUrl(authToken, path), JSON.stringify({ body })));
         // tslint:enable:no-console
     }
 }
