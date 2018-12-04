@@ -1,8 +1,9 @@
 {
   "name": "circle-github-bot",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "CircleCI comments on github",
   "main": "dist/index.js",
+  "typings": "dist/index.d.ts",
   "files": ["dist"],
   "scripts": {
     "build": "tsc -p src",
