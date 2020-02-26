@@ -27,7 +27,6 @@ interface IOptions {
 
 interface IEnvironment {
     readonly buildUrl: string;
-    readonly home: string;
     readonly repo: string;
     readonly sha1: string;
     readonly username: string;
@@ -37,7 +36,7 @@ interface IEnvironment {
 }
 
 // IEnvironment fields that must be defined or an Error is thrown.
-const REQUIRED_ENV: Array<keyof IEnvironment> = ["buildUrl", "home", "repo", "sha1", "username"];
+const REQUIRED_ENV: Array<keyof IEnvironment> = ["buildUrl", "repo", "sha1", "username"];
 
 // Synchronously execute command and return trimmed stdout as string
 function exec(command: string, options?: ExecSyncOptions) {
@@ -62,7 +61,6 @@ class Bot {
             buildUrl: process.env.CIRCLE_BUILD_URL,
             commitMessage: exec('git --no-pager log --pretty=format:"%s" -1').replace(/\\"/g, '\\\\"'),
             githubDomain,
-            home: process.env.HOME,
             prNumber,
             repo: process.env.CIRCLE_PROJECT_REPONAME,
             sha1: process.env.CIRCLE_SHA1,
@@ -82,7 +80,7 @@ class Bot {
 
     /** Get an absolute URL for the given artifact path. */
     public artifactUrl(artifactPath: string) {
-        return `${this.env.buildUrl}/artifacts/0/${this.env.home}/project/${artifactPath}`;
+        return `${this.env.buildUrl}/artifacts/0/${artifactPath}`;
     }
 
     /** Render an HTML link to the path with the given text. */
