@@ -58,7 +58,7 @@ class Bot {
         const prNumber = basename(process.env.CIRCLE_PULL_REQUEST || process.env.CI_PULL_REQUEST || "");
 
         const env: IEnvironment = {
-            buildUrl: process.env.CIRCLE_BUILD_URL,
+            buildUrl: "https://output.circle-artifacts.com/output/job/" + process.env.CIRCLE_WORKFLOW_JOB_ID,
             commitMessage: exec('git --no-pager log --pretty=format:"%s" -1').replace(/\\"/g, '\\\\"'),
             githubDomain,
             prNumber,
